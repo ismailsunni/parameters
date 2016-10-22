@@ -27,7 +27,7 @@ class TestDefaultSelectParameter(TestCase):
 
         self.parameter.options_list = options
         self.parameter.default_labels = default_labels
-        self.parameter.default_value = default_values
+        self.parameter.default_values = default_values
 
     def test_set_value(self):
         self.parameter.value = selected
@@ -38,4 +38,6 @@ class TestDefaultSelectParameter(TestCase):
     def test_default(self):
         """Test default value."""
         self.assertEqual(self.parameter.default_labels, default_labels)
-        self.parameter.default_value = 0.1
+        self.parameter.default_value = 0.2
+        self.assertEqual(
+            self.parameter.default_values[-1], self.parameter.default_value)

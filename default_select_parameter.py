@@ -75,7 +75,11 @@ class DefaultSelectParameter(SelectParameter):
         :param default_value: The default value.
         :type default_value: object
         """
-        # if default_value not in self.defaults:
-        #     raise ValueNotAllowedException
+        # For custom value
+        if default_value not in self.default_values:
+            if len(self.default_labels) == len(self.default_values):
+                self.default_values[-1] = default_value
+            else:
+                self.default_values.append(default_value)
 
         self._default_value = default_value
