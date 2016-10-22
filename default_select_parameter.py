@@ -7,12 +7,11 @@ __date__ = '10/21/16'
 __copyright__ = 'ismail@kartoza.com'
 __doc__ = ''
 
-
 from parameter_exceptions import ValueNotAllowedException
-from generic_parameter import GenericParameter
+from select_parameter import SelectParameter
 
 
-class DefaultSelectParameter(GenericParameter):
+class DefaultSelectParameter(SelectParameter):
     """Parameter that represent a select parameter with default."""
 
     def __init__(self, guid=None):
@@ -26,41 +25,43 @@ class DefaultSelectParameter(GenericParameter):
         """
 
         super(DefaultSelectParameter, self).__init__(guid)
-        self.expected_type = tuple
+        self.expected_type = object
+        self.element_type = object
 
-
-        self._choice_list = None
-        self._choice_value = None
-
-        self._default_value_list = None
+        # Store option for default labels
+        self._default_labels = None
+        # Store option for default values
+        self._default_values = None
+        # Store selected default value
         self._default_value = None
 
     @property
-    def choice_value(self):
-        """Property for choice_value"""
-        return self._choice_value
+    def default_labels(self):
+        """Property for default_labels"""
+        return self._default_labels
 
-    @choice_value.setter
-    def choice_value(self, choice_value_input):
-        """Setter for choice_value.
+    @default_labels.setter
+    def default_labels(self, default_labels):
+        """Setter for default_labels.
 
-        :param choice_value_input: The choice value.
-        :type choice_value_input: object
+        :param default_labels: The default_labels values.
+        :type default_labels: list
         """
-        if choice_value_input in self.choice_list:
-            self._choice_value = choice_value_input
-        else:
-            raise ValueNotAllowedException
+        self._default_labels = default_labels
 
     @property
-    def choice_list(self):
-        """Stores the list of options the value can take"""
-        return self._choice_list
+    def default_values(self):
+        """Property for default_values"""
+        return self._default_values
 
-    @choice_list.setter
-    def choice_list(self, value):
-        # the options type must be the same as the value type
-        self._choice_list = value
+    @default_values.setter
+    def default_values(self, default_values):
+        """Setter for default_values.
+
+        :param default_values: The default values.
+        :type default_values: list
+        """
+        self._default_values = default_values
 
     @property
     def default_value(self):
@@ -68,42 +69,13 @@ class DefaultSelectParameter(GenericParameter):
         return self._default_value
 
     @default_value.setter
-    def default_value(self, default_value_input):
+    def default_value(self, default_value):
         """Setter for default_value.
 
-        :param default_value_input: The default value.
-        :type default_value_input: object
+        :param default_value: The default value.
+        :type default_value: object
         """
-        if default_value_input in self.default_value_list:
-            self._default_value = default_value_input
-        else:
-            raise ValueNotAllowedException
+        # if default_value not in self.defaults:
+        #     raise ValueNotAllowedException
 
-    @property
-    def default_value_list(self):
-        """Stores the list of default value can take"""
-        return self._default_value_list
-
-    @default_value_list.setter
-    def default_value_list(self, value):
-        # the options type must be the same as the value type
-        self._default_value_list = value
-
-
-    @property
-    def value(self):
-        """Return the value of the parameter"""
-        return self.choice_value, self.default_value
-
-    @value.setter
-    def value(self, value):
-        """Setter fot the value
-
-        :param value: The value as tuple of two.
-        :type value: tuple
-        """
-        if isinstance(value, tuple) and len(value) == 2:
-            self.choice_value = value[0]
-            self.default_value = value[1]
-        else:
-            raise ValueNotAllowedException
+        self._default_value = default_value
