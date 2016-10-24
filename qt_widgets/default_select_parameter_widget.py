@@ -53,8 +53,13 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
                     self._parameter.default_values[i]:
                 radio_button.setChecked(True)
 
+        # Create double spin box for custom value
         self.custom_value = QDoubleSpinBox()
+        if self._parameter.default_values[-1]:
+            self.custom_value.setValue(self._parameter.default_values[-1])
         self.radio_button_layout.addWidget(self.custom_value)
+
+        self.enable_custom_value()
 
         # Reset the layout
         self._input_layout.setParent(None)
@@ -73,6 +78,10 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
 
         self._main_layout.addLayout(self._input_layout)
         self._main_layout.addLayout(self._help_layout)
+
+        # Connect
+        self._default_input_button_group.buttonClicked.connect(
+            self.enable_custom_value)
 
     def raise_invalid_type_exception(self):
         message = 'Expecting element type of %s' % (
@@ -150,3 +159,11 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
         else:
             self._default_input.setCurrentIndex(default_index)
             return True
+
+    def enable_custom_value(self):
+        radio_button_checked_id = self._default_input_button_group.checkedId()
+        if (radio_button_checked_id
+              == len(self._parameter.default_values) - 1):
+            self.custom_value.setDisabled(False)
+        else:
+            self.custom_value.setDisabled(True)
