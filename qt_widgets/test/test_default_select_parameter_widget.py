@@ -25,12 +25,9 @@ class TestSelectParameterWidget(unittest.TestCase):
         default_select_parameter.description = (
             'Column used for affected field in the vector')
         default_select_parameter.element_type = str
-        default_select_parameter.choice_list = [
+        default_select_parameter.options_list = [
             'FLOODPRONE', 'affected', 'floodprone', 'yes/no',
             '\xddounicode test']
-        default_select_parameter.default_value_list = [1, 2, 3, 4]
-
-        default_select_parameter.value = ('affected', 1)
 
         widget = DefaultSelectParameterWidget(default_select_parameter)
 

@@ -8,12 +8,14 @@ __date__ = '10/22/2016'
 __copyright__ = 'imajimatika@gmail.com'
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QComboBox, QRadioButton
+from PyQt4.QtGui import (
+    QVBoxLayout, QHBoxLayout, QGridLayout,
+    QComboBox, QRadioButton, QButtonGroup, QWidget, QLineEdit, QLabel)
 
-from qt_widgets.generic_parameter_widget import GenericParameterWidget
+# from qt_widgets.generic_parameter_widget import GenericParameterWidget
+from qt_widgets.select_parameter_widget import SelectParameterWidget
 
-
-class DefaultSelectParameterWidget(GenericParameterWidget):
+class DefaultSelectParameterWidget(SelectParameterWidget):
     """Widget class for Default Select Parameter."""
     def __init__(self, parameter, parent=None):
         """Constructor
@@ -24,54 +26,50 @@ class DefaultSelectParameterWidget(GenericParameterWidget):
         """
         super(DefaultSelectParameterWidget, self).__init__(parameter, parent)
 
-        self._choice_input = QComboBox()
+        self.default_layout = QHBoxLayout()
+        self.radio_button_layout = QHBoxLayout()
+        self.radio_button_widget = QWidget()
 
-        index = -1
-        current_index = -1
-        for opt in self._parameter.choice_list:
-            index += 1
-            if opt == self._parameter.choice_value:
-                current_index = index
-            self._choice_input.addItem(opt)
-            self._choice_input.setItemData(index, opt, Qt.UserRole)
+        self._default_label = QLabel('Use default')
 
-        self._choice_input.setCurrentIndex(current_index)
+        # Add label for default
+        # self.radio_button_layout.addWidget(self._default_label)
 
-        self._default_input = QComboBox()
+        # Create radio button group
+        self._default_input_button_group = QButtonGroup()
 
-        index = -1
-        current_index = -1
-        for opt in self._parameter.default_value_list:
-            index += 1
-            if opt == self._parameter.default_value:
-                current_index = index
-            if not isinstance(opt, basestring):
-                self._default_input.addItem(str(opt))
+        for i in range(len(self._parameter.default_labels)):
+            if '%s' in self._parameter.default_labels[i]:
+                label = (
+                    self._parameter.default_labels[i] %
+                    self._parameter.default_values[i])
             else:
-                self._default_input.addItem(opt)
+                label = self._parameter.default_labels[i]
 
-            self._default_input.setItemData(index, opt, Qt.UserRole)
+            radio_button = QRadioButton(label)
+            self.radio_button_layout.addWidget(radio_button)
+            self._default_input_button_group.addButton(radio_button, i)
+            if self._parameter.default_value == \
+                    self._parameter.default_values[i]:
+                radio_button.setChecked(True)
 
+        line_edit = QLineEdit()
+        self.radio_button_layout.addWidget(line_edit)
 
-        self._default_input.setCurrentIndex(current_index)
-
-        self._inner_input_layout.addWidget(self._choice_input)
-        self._inner_input_layout.addWidget(self._default_input)
-
-        # override self._input_layout arrangement to make the label at the top
-        # reset the layout
+        # Reset the layout
         self._input_layout.setParent(None)
         self._help_layout.setParent(None)
 
         self._label.setParent(None)
         self._inner_input_layout.setParent(None)
 
-        self._input_layout = QVBoxLayout()
+        self._input_layout = QGridLayout()
         self._input_layout.setSpacing(0)
 
-        # put element into layout
-        self._input_layout.addWidget(self._label)
-        self._input_layout.addLayout(self._inner_input_layout)
+        self._input_layout.addWidget(self._label, 0, 0)
+        self._input_layout.addLayout(self._inner_input_layout, 0, 1)
+        self._input_layout.addWidget(self._default_label, 1, 0)
+        self._input_layout.addLayout(self.radio_button_layout, 1, 1)
 
         self._main_layout.addLayout(self._input_layout)
         self._main_layout.addLayout(self._help_layout)

@@ -230,11 +230,15 @@ def main():
     default_select_parameter.description = (
         'Column used for affected field in the vector')
     default_select_parameter.element_type = str
-    default_select_parameter.choice_list = [
+    default_select_parameter.options_list = [
         'FLOODPRONE', 'affected', 'floodprone', 'yes/no',
         '\xddounicode test']
-    default_select_parameter.default_value_list = [1, 2, 3, 4]
-    default_select_parameter.value = ('affected', 2)
+    default_select_parameter.value = 'affected'
+    default_select_parameter.default_labels = [
+        'Setting (%s)', 'Do not use', 'Custom']
+    default_select_parameter.default_values = [0.1, None, 0]
+    default_select_parameter.default_value = 0.1
+
 
     def _custom_validator(value):
         valid = True
@@ -247,6 +251,7 @@ def main():
     group_parameter.custom_validator = _custom_validator
 
     parameters = [
+        default_select_parameter,
         string_parameter,
         integer_parameter,
         boolean_parameter,
@@ -260,7 +265,6 @@ def main():
         dict_parameter,
         group_parameter,
         select_parameter,
-        default_select_parameter
     ]
 
     extra_parameters = [
