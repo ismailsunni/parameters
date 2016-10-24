@@ -236,9 +236,8 @@ def main():
     default_select_parameter.value = 'affected'
     default_select_parameter.default_labels = [
         'Setting (%s)', 'Do not use', 'Custom']
-    default_select_parameter.default_values = [0.1, None, 0]
-    default_select_parameter.default_value = 0.1
-
+    default_select_parameter.default_values = [0.1, None, 0.2]
+    default_select_parameter.default_value = 0.2
 
     def _custom_validator(value):
         valid = True
@@ -251,6 +250,7 @@ def main():
     group_parameter.custom_validator = _custom_validator
 
     parameters = [
+        default_select_parameter,
         default_select_parameter,
         string_parameter,
         integer_parameter,

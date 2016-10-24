@@ -9,8 +9,8 @@ __copyright__ = 'imajimatika@gmail.com'
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import (
-    QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox,
-    QComboBox, QRadioButton, QButtonGroup, QWidget, QLineEdit, QLabel)
+    QHBoxLayout, QGridLayout, QDoubleSpinBox,
+    QRadioButton, QButtonGroup, QWidget, QLabel)
 
 # from qt_widgets.generic_parameter_widget import GenericParameterWidget
 from qt_widgets.select_parameter_widget import SelectParameterWidget
@@ -59,7 +59,7 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
             self.custom_value.setValue(self._parameter.default_values[-1])
         self.radio_button_layout.addWidget(self.custom_value)
 
-        self.enable_custom_value()
+        self.toggle_custom_value()
 
         # Reset the layout
         self._input_layout.setParent(None)
@@ -81,7 +81,7 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
 
         # Connect
         self._default_input_button_group.buttonClicked.connect(
-            self.enable_custom_value)
+            self.toggle_custom_value)
 
     def raise_invalid_type_exception(self):
         message = 'Expecting element type of %s' % (
@@ -106,7 +106,6 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
             err = self.raise_invalid_type_exception()
             raise err
 
-        # print self._default_input_button_group.checkedButton().text()
         radio_button_checked_id = self._default_input_button_group.checkedId()
         # No radio button checked, then default value = None
         if radio_button_checked_id == -1:
@@ -122,26 +121,7 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
             self._parameter.default = self._parameter.default_values[
                 radio_button_checked_id]
 
-        print self._parameter.default
-
         return self._parameter
-
-    def set_choice(self, choice):
-        """Set choice value by item's string.
-
-        :param choice: The choice.
-        :type choice: str
-
-        :returns: True if success, else False.
-        :rtype: bool
-        """
-        # Find index of choice
-        choice_index = self._parameter.choice_list.index(choice)
-        if choice_index < 0:
-            return False
-        else:
-            self._choice_input.setCurrentIndex(choice_index)
-            return True
 
     def set_default(self, default):
         """Set default value by item's string.
@@ -153,14 +133,19 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
         :rtype: bool
         """
         # Find index of choice
-        default_index = self._parameter.default_value_list.index(default)
-        if default_index < 0:
-            return False
-        else:
-            self._default_input.setCurrentIndex(default_index)
-            return True
+        try:
+            default_index = self._parameter.default_values.index(default)
+            self._default_input_button_group.button(default_index).setChecked(
+                True)
+        except ValueError:
+            last_index = len(self._parameter.default_values) - 1
+            self._default_input_button_group.button(last_index).setChecked(
+                True)
+            self.custom_value.setValue(default)
 
-    def enable_custom_value(self):
+        self.toggle_custom_value()
+
+    def toggle_custom_value(self):
         radio_button_checked_id = self._default_input_button_group.checkedId()
         if (radio_button_checked_id
               == len(self._parameter.default_values) - 1):
