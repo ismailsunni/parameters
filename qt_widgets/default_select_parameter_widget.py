@@ -9,7 +9,7 @@ __copyright__ = 'imajimatika@gmail.com'
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import (
-    QVBoxLayout, QHBoxLayout, QGridLayout,
+    QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox,
     QComboBox, QRadioButton, QButtonGroup, QWidget, QLineEdit, QLabel)
 
 # from qt_widgets.generic_parameter_widget import GenericParameterWidget
@@ -53,8 +53,8 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
                     self._parameter.default_values[i]:
                 radio_button.setChecked(True)
 
-        line_edit = QLineEdit()
-        self.radio_button_layout.addWidget(line_edit)
+        self.custom_value = QDoubleSpinBox()
+        self.radio_button_layout.addWidget(self.custom_value)
 
         # Reset the layout
         self._input_layout.setParent(None)
@@ -86,23 +86,34 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
         :returns: A DefaultSelectParameter from the current state of widget
 
         """
-        current_index = self._choice_input.currentIndex()
-        selected_choice = self._choice_input.itemData(
-            current_index, Qt.UserRole)
-        if hasattr(selected_choice, 'toPyObject'):
-            selected_choice = selected_choice.toPyObject()
-
-        current_index = self._default_input.currentIndex()
-        selected_default = self._default_input.itemData(
-            current_index, Qt.UserRole)
-        if hasattr(selected_default, 'toPyObject'):
-            selected_default = selected_default.toPyObject()
+        current_index = self._input.currentIndex()
+        selected_value = self._input.itemData(current_index, Qt.UserRole)
+        if hasattr(selected_value, 'toPyObject'):
+            selected_value = selected_value.toPyObject()
 
         try:
-            self._parameter.value = (selected_choice, selected_default)
+            self._parameter.value = selected_value
         except ValueError:
             err = self.raise_invalid_type_exception()
             raise err
+
+        # print self._default_input_button_group.checkedButton().text()
+        radio_button_checked_id = self._default_input_button_group.checkedId()
+        # No radio button checked, then default value = None
+        if radio_button_checked_id == -1:
+            self._parameter.default = None
+        # The last radio button (custom) is checked, get the value from the
+        # line edit
+        elif (radio_button_checked_id
+                  == len(self._parameter.default_values) - 1):
+            self._parameter.default_values[radio_button_checked_id] = \
+                self.custom_value.value()
+            self._parameter.default = self.custom_value.value()
+        else:
+            self._parameter.default = self._parameter.default_values[
+                radio_button_checked_id]
+
+        print self._parameter.default
 
         return self._parameter
 
