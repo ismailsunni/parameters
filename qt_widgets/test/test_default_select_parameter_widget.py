@@ -97,5 +97,3 @@ class TestSelectParameterWidget(unittest.TestCase):
         self.assertTrue(widget.custom_value.isEnabled())
         self.assertEqual(widget._default_input_button_group.checkedId(), 2)
         self.assertEqual(widget.custom_value.value(), 0.3)
-
-

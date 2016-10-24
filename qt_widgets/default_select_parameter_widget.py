@@ -12,8 +12,8 @@ from PyQt4.QtGui import (
     QHBoxLayout, QGridLayout, QDoubleSpinBox,
     QRadioButton, QButtonGroup, QWidget, QLabel)
 
-# from qt_widgets.generic_parameter_widget import GenericParameterWidget
 from qt_widgets.select_parameter_widget import SelectParameterWidget
+
 
 class DefaultSelectParameterWidget(SelectParameterWidget):
     """Widget class for Default Select Parameter."""
@@ -112,10 +112,10 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
             self._parameter.default = None
         # The last radio button (custom) is checked, get the value from the
         # line edit
-        elif (radio_button_checked_id
-                  == len(self._parameter.default_values) - 1):
-            self._parameter.default_values[radio_button_checked_id] = \
-                self.custom_value.value()
+        elif (radio_button_checked_id ==
+                len(self._parameter.default_values) - 1):
+            self._parameter.default_values[radio_button_checked_id] \
+                = self.custom_value.value()
             self._parameter.default = self.custom_value.value()
         else:
             self._parameter.default = self._parameter.default_values[
@@ -147,8 +147,8 @@ class DefaultSelectParameterWidget(SelectParameterWidget):
 
     def toggle_custom_value(self):
         radio_button_checked_id = self._default_input_button_group.checkedId()
-        if (radio_button_checked_id
-              == len(self._parameter.default_values) - 1):
+        if (radio_button_checked_id ==
+                len(self._parameter.default_values) - 1):
             self.custom_value.setDisabled(False)
         else:
             self.custom_value.setDisabled(True)
